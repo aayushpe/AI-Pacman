@@ -132,6 +132,9 @@ def uniformCostSearch(problem):
     priorityQueue = PriorityQueue()
     visitedList = set()
 
+    # the final 0 indicates priority, the cost from the previous node to the current node.
+    # better costs will get pushed to the top of the priority queue and is explored
+    # by the search algorithim after the next iteration
     priorityQueue.push((problem.getStartState(), [], 0), 0)
 
     while not priorityQueue.isEmpty():
@@ -161,8 +164,32 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+# similar implementation to uniform cost search but includes a heuristic function added to the cost
+    from util import PriorityQueue
+    priorityQueue = PriorityQueue()
+    visitedList = set()
+
+    # the final 0 indicates priority, the cost from the previous node to the current node.
+    # better costs will get pushed to the top of the priority queue and is explored
+    # by the search algorithim after the next iteration
+    priorityQueue.push((problem.getStartState(), [], 0), 0)
+
+    while not priorityQueue.isEmpty():
+        node, actionslist, cost = priorityQueue.pop()
+
+        if(problem.isGoalState(node)):
+            return actionslist
+        
+        if node not in visitedList:
+            visitedList.add(node)
+
+            for neighbour, path, stepCost in problem.getSuccessors(node):
+                if neighbour not in visitedList:
+                    newActionList = actionslist + [path]
+                    newCost = cost + stepCost
+                    heuristicCost = heuristic(neighbour, problem)
+                    totalCost = newCost + heuristicCost
+                    priorityQueue.push((neighbour, newActionList, newCost), totalCost)
     util.raiseNotDefined()
 
 
