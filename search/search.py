@@ -79,10 +79,9 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     from util import Stack
     stack = Stack()
-
+    visitedlist = set()
     # Initial vertex start state
     stack.push((problem.getStartState(), [], 0))
-    visitedlist = set()
 
     while not stack.isEmpty():
         # each layer of the stack will have the currentnode, the list of actions so far, and the cost
@@ -107,9 +106,23 @@ def breadthFirstSearch(problem):
     queue = Queue()
     visitedlist = set()
 
-    Queue.push((problem.getStartState(), [], 0))
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
+# Same implementation as depth first search but with a queue instead of a stack
+    queue.push((problem.getStartState(), [], 0))
+
+    while not queue.isEmpty():
+        node, actionslist, cost = queue.pop()
+
+        if(problem.isGoalState(node)):
+            return actionslist
+        
+        if node not in visitedlist:
+            visitedlist.add(node)
+            for successor, path, stepCost in problem.getSuccessors(node):
+                if successor not in visitedlist:
+                    newActionList = actionslist + [path]
+                    newCost = cost + stepCost
+                    queue.push((successor, newActionList, newCost))
+    
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
