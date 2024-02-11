@@ -187,8 +187,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if neighbour not in visitedList:
                     newActionList = actionslist + [path]
                     newCost = cost + stepCost
-                    heuristicCost = heuristic(neighbour, problem)
-                    totalCost = newCost + heuristicCost
+                    heuristics = heuristic(neighbour, problem)
+                    totalCost = newCost + heuristics
                     priorityQueue.push((neighbour, newActionList, newCost), totalCost)
     util.raiseNotDefined()
 
