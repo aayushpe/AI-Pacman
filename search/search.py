@@ -79,7 +79,7 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     from util import Stack
     stack = Stack()
-    visitedlist = set()
+    visitedList = set()
     # Initial vertex start state
     stack.push((problem.getStartState(), [], 0))
 
@@ -91,13 +91,14 @@ def depthFirstSearch(problem):
         if(problem.isGoalState(node)):
             return actionslist
         
-        if node not in visitedlist: # if the node hasn't been visited yet...
-            visitedlist.add(node)
-            for successor, action, stepCost in problem.getSuccessors(node):
-                if successor not in visitedlist:
+        if node not in visitedList: # if the node hasn't been visited yet...
+            visitedList.add(node)
+
+            for neighbour, action, stepCost in problem.getSuccessors(node):
+                if neighbour not in visitedList:
                     newActionList = actionslist + [action]
                     newCost = cost + stepCost
-                    stack.push((successor, newActionList, newCost))
+                    stack.push((neighbour, newActionList, newCost))
 
     util.raiseNotDefined()
 
@@ -117,17 +118,39 @@ def breadthFirstSearch(problem):
         
         if node not in visitedlist:
             visitedlist.add(node)
-            for successor, path, stepCost in problem.getSuccessors(node):
-                if successor not in visitedlist:
+            
+            for neighbour, path, stepCost in problem.getSuccessors(node):
+                if neighbour not in visitedlist:
                     newActionList = actionslist + [path]
                     newCost = cost + stepCost
-                    queue.push((successor, newActionList, newCost))
+                    queue.push((neighbour, newActionList, newCost))
     
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    from util import PriorityQueue
+    priorityQueue = PriorityQueue()
+    visitedList = set()
+
+    priorityQueue.push((problem.getStartState(), [], 0), 0)
+
+    while not priorityQueue.isEmpty():
+        node, actionslist, cost = priorityQueue.pop()
+
+        if(problem.isGoalState(node)):
+            return actionslist
+        
+        if node not in visitedList:
+            visitedList.add(node)
+
+            for neighbour, path, stepCost in problem.getSuccessors(node):
+                if neighbour not in visitedList:
+                    newActionList = actionslist + [path]
+                    newCost = cost + stepCost
+                    priorityQueue.push((neighbour, newActionList, newCost), newCost)
+
+
+    
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
