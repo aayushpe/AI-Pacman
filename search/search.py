@@ -169,8 +169,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     priorityQueue = PriorityQueue()
     visitedList = set()
 
-    # the final 0 indicates priority, the cost from the previous node to the current node.
-    # better costs will get pushed to the top of the priority queue and is explored
+    # the final 0 indicates the priority, the cost from the previous node to the current node + the heuristic function
+    # better values will get pushed to the top of the priority queue and is explored
     # by the search algorithim after the next iteration
     priorityQueue.push((problem.getStartState(), [], 0), 0)
 
