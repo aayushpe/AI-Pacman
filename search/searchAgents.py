@@ -294,14 +294,15 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
+        return (self.startingPosition, (False, False, False, False))
         util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        return all(state[1])
+        
         util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -324,7 +325,21 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            x, y = state[0]
+            visitedCorners = state[1]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+
+            if not self.walls[nextx][nexty]:
+                nextVisitedCorners = list(visitedCorners)  # Make a mutable copy
+                nextPos = (nextx, nexty)
+
+                # Check if the next position is a corner and mark it as visited
+                for i, corner in enumerate(self.corners):
+                    if nextPos == corner:
+                        nextVisitedCorners[i] = True
+
+                successors.append(((nextPos, tuple(nextVisitedCorners)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -344,23 +359,40 @@ class CornersProblem(search.SearchProblem):
 
 
 def cornersHeuristic(state, problem):
-    """
-    A heuristic for the CornersProblem that you defined.
+    currentPosition, visitedCorners = state
+    corners = problem.corners  # These are the corner coordinates
 
-      state:   The current search state
-               (a data structure you chose in your search problem)
+    # Filter out the corners that have already been visited
+    unvisited = [corners[i] for i in range(len(corners)) if not visitedCorners[i]]
 
-      problem: The CornersProblem instance for this layout.
+    # Base case: If there are no unvisited corners left, the heuristic value is 0
+    if not unvisited:
+        return 0
 
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
-    """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    # Start with a large number to find the minimum distance
+    heuristic = 0
+    tempPosition = currentPosition
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # While there are unvisited corners, find the nearest one, add its distance to the heuristic,
+    # then pretend we're at that corner and repeat. This approximates the remaining path length.
+    while unvisited:
+        # Calculate the distance to each unvisited corner
+        distances = [util.manhattanDistance(tempPosition, corner) for corner in unvisited]
+        
+        # Find the nearest unvisited corner and its distance
+        minDistance = min(distances)
+        nearestCornerIndex = distances.index(minDistance)
+        
+        # Update the heuristic with the distance to this nearest corner
+        heuristic += minDistance
+        
+        # Update tempPosition to the nearest unvisited corner's position
+        tempPosition = unvisited[nearestCornerIndex]
+        
+        # Remove this corner from the list of unvisited corners
+        unvisited.pop(nearestCornerIndex)
+
+    return heuristic
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
