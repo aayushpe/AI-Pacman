@@ -331,7 +331,7 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
 
             if not self.walls[nextx][nexty]:
-                nextVisitedCorners = list(visitedCorners)  # Make a mutable copy
+                nextVisitedCorners = list(visitedCorners) 
                 nextPos = (nextx, nexty)
 
                 # Check if the next position is a corner and mark it as visited
@@ -359,26 +359,29 @@ class CornersProblem(search.SearchProblem):
 
 
 def cornersHeuristic(state, problem):
-    currentPosition, visitedCorners = state
+    currentState, visitedCorners = state
     corners = problem.corners 
 
     # Filter out the corners that have already been visited
-    unvisited = [corners[i] for i in range(len(corners)) if not visitedCorners[i]]
+    cornersList = [corners[i] for i in range(len(corners)) if not visitedCorners[i]]
 
-    # Base case: If there are no unvisited corners left, the heuristic value is 0
-    if not unvisited:
+    if not cornersList:
         return 0
 
     heuristic = 0
-    tempPosition = currentPosition
+    tempPosition = currentState
 
-    while unvisited:
-        distances = [util.manhattanDistance(tempPosition, corner) for corner in unvisited]
-        minDistance = min(distances)
-        nearestCornerIndex = distances.index(minDistance)
+    while cornersList:
+        # A list of distance to each corner in the maze
+        distanceToCorner = [util.manhattanDistance(tempPosition, corner) for corner in cornersList]
+
+        # find the closest corner in the list and save the location
+        minDistance = min(distanceToCorner)
+        nearestCorner = distanceToCorner.index(minDistance)
+        
         heuristic += minDistance
-        tempPosition = unvisited[nearestCornerIndex]
-        unvisited.pop(nearestCornerIndex)
+        tempPosition = cornersList[nearestCorner]
+        cornersList.pop(nearestCorner)
 
     return heuristic
 
