@@ -150,7 +150,7 @@ def uniformCostSearch(problem):
                 if neighbour not in visitedList:
                     newActionList = actionslist + [path]
                     newCost = cost + stepCost
-                    priorityQueue.push((neighbour, newActionList, newCost), newCost)
+                    priorityQueue.push((neighbour, newActionList, newCost), newCost) # since not heuristics, use regular cost
 
 
     
@@ -187,9 +187,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if neighbour not in visitedList:
                     newActionList = actionslist + [path]
                     newCost = cost + stepCost
-                    heuristics = heuristic(neighbour, problem)
+                    heuristics = heuristic(neighbour, problem) # Calculate heuristics 
                     totalCost = newCost + heuristics
-                    priorityQueue.push((neighbour, newActionList, newCost), totalCost)
+                    priorityQueue.push((neighbour, newActionList, newCost), totalCost) # pushed best cost + heurstic to the top
     util.raiseNotDefined()
 
 

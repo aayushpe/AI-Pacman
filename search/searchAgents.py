@@ -360,7 +360,7 @@ class CornersProblem(search.SearchProblem):
 
 def cornersHeuristic(state, problem):
     currentPosition, visitedCorners = state
-    corners = problem.corners  # These are the corner coordinates
+    corners = problem.corners 
 
     # Filter out the corners that have already been visited
     unvisited = [corners[i] for i in range(len(corners)) if not visitedCorners[i]]
@@ -369,27 +369,15 @@ def cornersHeuristic(state, problem):
     if not unvisited:
         return 0
 
-    # Start with a large number to find the minimum distance
     heuristic = 0
     tempPosition = currentPosition
 
-    # While there are unvisited corners, find the nearest one, add its distance to the heuristic,
-    # then pretend we're at that corner and repeat. This approximates the remaining path length.
     while unvisited:
-        # Calculate the distance to each unvisited corner
         distances = [util.manhattanDistance(tempPosition, corner) for corner in unvisited]
-        
-        # Find the nearest unvisited corner and its distance
         minDistance = min(distances)
         nearestCornerIndex = distances.index(minDistance)
-        
-        # Update the heuristic with the distance to this nearest corner
         heuristic += minDistance
-        
-        # Update tempPosition to the nearest unvisited corner's position
         tempPosition = unvisited[nearestCornerIndex]
-        
-        # Remove this corner from the list of unvisited corners
         unvisited.pop(nearestCornerIndex)
 
     return heuristic
