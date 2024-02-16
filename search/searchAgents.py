@@ -358,6 +358,7 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
+# return the manhattan distances for all corners
 def cornersHeuristic(state, problem):
     currentState, visitedCorners = state
     corners = problem.corners 
@@ -368,6 +369,7 @@ def cornersHeuristic(state, problem):
     if not cornersList:
         return 0
 
+    # starting values
     heuristic = 0
     tempPosition = currentState
 
@@ -380,7 +382,11 @@ def cornersHeuristic(state, problem):
         nearestCorner = distanceToCorner.index(minDistance)
         
         heuristic += minDistance
+
+        # pacmans next state is from the first corner explored
         tempPosition = cornersList[nearestCorner]
+
+        # Remove the visited corner from the list
         cornersList.pop(nearestCorner)
 
     return heuristic
@@ -475,9 +481,20 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    currentPosition, foodGrid = state
+    foodList = foodGrid.asList()
+
+    # Base case: no food left
+    if not foodList:
+        return 0
+
+    # Use maze distance for more accuracy
+    mazeDistances = [mazeDistance(currentPosition, food, problem.startingGameState) for food in foodList]
+
+    # Heuristic: maximum maze distance to any piece of food
+    furthestFoodDistance = max(mazeDistances)
+    
+    return furthestFoodDistance
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
