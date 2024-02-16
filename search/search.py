@@ -150,7 +150,13 @@ def uniformCostSearch(problem):
                 if neighbour not in visitedList:
                     newActionList = actionslist + [path]
                     newCost = cost + stepCost
-                    priorityQueue.push((neighbour, newActionList, newCost), newCost) # since not heuristics, use regular cost
+                    
+                    # will return 0 since uniform cost's heuristic value is always 0
+                    heuristic = nullHeuristic(neighbour, problem)
+                    totalCost = newCost + heuristic
+
+                    # Total cost will be the same as the current cost
+                    priorityQueue.push((neighbour, newActionList, newCost), totalCost) 
 
 
     
